@@ -1,5 +1,5 @@
 import mountElement, { createDOMElement } from "./mountElement";
-import { updateDomAttribute } from "./elementProps";
+import { updateDomAttribute, getEventName } from "./elementProps";
 
 export default function diff(vNode, container, oldDom) {
   const oldVNode = oldDom && oldDom._vNode;
@@ -25,17 +25,50 @@ export default function diff(vNode, container, oldDom) {
       updateChildren(oldDom, vNode, oldVNode);
     }
   } else {
-    const newDOMElement = createDOMElement(vNode);
-    container.replaceChild(newDOMElement, oldDom);
+    // TODO replace with insertBefore and remove
+    container.replaceChild(createDOMElement(vNode), oldDom);
   }
 }
 
 function updateChildren(oldDom, vNode, oldVNode) {
-  vNode.children.forEach((c, i) => diff(c, oldDom, oldDom.childNodes[i]));
+  const keyDoms = Array.from(oldDom.childNodes).reduce((acc, cur) => {
+    if (cur.nodeType === 1) {
+      const key = cur.getAttribute("key");
+      if (typeof key !== "undefined") {
+        acc[key] = cur;
+      }
+    }
+    return acc;
+  }, {});
+
+  if (Object.keys(keyDoms).length === 0) {
+    vNode.children.forEach((c, i) => diff(c, oldDom, oldDom.childNodes[i]));
+  } else {
+    vNode.children.forEach((child, index) => {
+      const ondIndexDom = oldDom.childNodes[index];
+      if (child.props && typeof child.props.key !== "undefined") {
+        const key = child.props.key;
+        const keyDom = keyDoms[key];
+        if (keyDom) {
+          delete keyDoms[key];
+          diff(child, oldDom, keyDom);
+          if (ondIndexDom && ondIndexDom !== keyDom) {
+            oldDom.insertBefore(keyDom, ondIndexDom);
+          }
+        } else {
+          mountElement(child, oldDom, ondIndexDom);
+        }
+      } else {
+        mountElement(child, oldDom, ondIndexDom);
+      }
+    });
+    Object.values(keyDoms).forEach((dom) => unMount(dom));
+  }
+
   const newLength = vNode.children.length;
-  const oldLength = oldVNode.children.length;
+  const oldLength = oldDom.childNodes.length;
   for (let i = oldLength; i >= newLength && i >= 0; i--) {
-    oldDom.childNodes[i] && oldDom.childNodes[i].remove();
+    oldDom.childNodes[i] && unMount(oldDom.childNodes[i]);
   }
 }
 
@@ -65,4 +98,25 @@ function updateComponent(vNode, container, oldDom) {
     diff(newVNode, container, oldDom);
     oldInstance.componentDidUpdate(prevProps, preState);
   }
+}
+
+function unMount(dom) {
+  const vNode = dom._vNode;
+  const props = vNode.props;
+  if (props.ref) {
+    props.ref(null);
+  }
+  if (vNode.componentInstance) {
+    vNode.componentInstance.componentWillUnmount();
+  }
+  Object.keys(props).forEach((prop) => {
+    const eventName = getEventName(prop);
+    if (eventName) {
+      dom.removeEventListener(prop, props[prop]);
+    }
+  });
+  for (let i = dom.childNodes.length - 1; i >= 0; i--) {
+    dom.childNodes[i].remove();
+  }
+  dom.remove();
 }

@@ -27,7 +27,7 @@ export function updateDomAttribute(dom, { props }, { props: oldProps }) {
   });
 }
 
-function getEventName(propName) {
+export function getEventName(propName) {
   if (propName.startsWith("on")) {
     return propName.slice(2).replace(/^\S/g, (c) => c.toLowerCase());
   }
