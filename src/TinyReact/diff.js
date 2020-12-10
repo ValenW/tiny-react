@@ -3,14 +3,17 @@ import { updateDomAttribute } from "./elementProps";
 
 export default function diff(vNode, container, oldDom) {
   const oldVNode = oldDom && oldDom._vNode;
+  const oldComponent = oldDom && oldDom._vNode.component;
   if (!oldDom || !oldVNode) {
     container.innerHTML = "";
     mountElement(vNode, container);
+  } else if (typeof vNode.type === "function") {
+    const sameComponent = vNode.type === oldComponent;
+    if (!sameComponent) {
+      mountElement(vNode, container, oldDom);
+    }
   } else if (oldVNode.type === vNode.type) {
-    const type = vNode.type;
-    if (typeof type === "function") {
-      // 更新组件
-    } else if (type === "text") {
+    if (vNode.type === "text") {
       if (vNode.props.textContent !== oldVNode.props.textContent) {
         oldDom.textContent = vNode.props.textContent;
         oldDom._vNode = vNode;
@@ -20,12 +23,8 @@ export default function diff(vNode, container, oldDom) {
       updateChildren(oldDom, vNode, oldVNode);
     }
   } else {
-    if (typeof vNode.type === "function") {
-      // 组件处理
-    } else {
-      const newDOMElement = createDOMElement(vNode);
-      container.replaceChild(newDOMElement, oldDom);
-    }
+    const newDOMElement = createDOMElement(vNode);
+    container.replaceChild(newDOMElement, oldDom);
   }
 }
 

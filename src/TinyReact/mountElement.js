@@ -1,6 +1,6 @@
 import { setDomAttribute } from "./elementProps";
 
-export default function mountElement(vNode, container) {
+export default function mountElement(vNode, container, oldDom) {
   // component's type is function
   if (typeof vNode.type === "function") {
     const type = vNode.type;
@@ -8,13 +8,16 @@ export default function mountElement(vNode, container) {
     if (type.prototype && typeof type.prototype.render === "function") {
       const comp = new type(vNode.props);
       renderVNode = comp.render(vNode.props || {});
-      renderVNode.component = comp;
+      renderVNode.component = comp.constructor;
+      renderVNode.componentInstance = comp;
     } else {
       renderVNode = type(vNode.props || {});
+      renderVNode.component = type;
     }
-    mountElement(renderVNode, container);
+    mountElement(renderVNode, container, oldDom);
   } else {
-    container.appendChild(createDOMElement(vNode));
+    const dom = createDOMElement(vNode);
+    oldDom ? container.replaceChild(dom, oldDom) : container.appendChild(dom);
   }
 }
 
@@ -28,8 +31,8 @@ export function createDOMElement(vNode) {
   }
   vNode.children.forEach((child) => mountElement(child, element));
   element._vNode = vNode;
-  if (vNode.component) {
-    vNode.component.dom = element;
+  if (vNode.componentInstance) {
+    vNode.componentInstance.dom = element;
   }
   return element;
 }

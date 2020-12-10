@@ -4,8 +4,9 @@ const root = document.getElementById("root");
 
 const FunctionComp = (props) => (
   <div>
+    -- Function
     <Heart />
-    Hello
+    Hello -- Function End
   </div>
 );
 
@@ -17,6 +18,7 @@ class ClassComp extends TinyReact.Component {
   render() {
     return (
       <div>
+        -- class
         <FunctionComp />
         <div>
           <h1>Hello</h1>
@@ -29,6 +31,7 @@ class ClassComp extends TinyReact.Component {
           </button>
         </div>
         <Heart />
+        -- class end
       </div>
     );
   }
@@ -71,8 +74,8 @@ const updatedDOM = (
     <h3>这个将会被删除</h3>
     2, 3<br />
     <input type="password" value="12345" />
-    <FunctionComp />
     <ClassComp name="name1" code={"code2"} />
+    <FunctionComp />
   </div>
 );
 
