@@ -10,6 +10,10 @@ const FunctionComp = (props) => (
 );
 
 class ClassComp extends TinyReact.Component {
+  constructor(props) {
+    super(props);
+    this.state = { title: "original" };
+  }
   render() {
     return (
       <div>
@@ -18,6 +22,11 @@ class ClassComp extends TinyReact.Component {
           <h1>Hello</h1>
           {this.props.name}
           {this.props.code}
+          <br />
+          {this.state.title}
+          <button onClick={() => this.setState({ title: "changed" })}>
+            change title
+          </button>
         </div>
         <Heart />
       </div>
@@ -62,6 +71,8 @@ const updatedDOM = (
     <h3>这个将会被删除</h3>
     2, 3<br />
     <input type="password" value="12345" />
+    <FunctionComp />
+    <ClassComp name="name1" code={"code2"} />
   </div>
 );
 
