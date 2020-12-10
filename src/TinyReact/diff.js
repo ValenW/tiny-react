@@ -1,4 +1,4 @@
-import mountElement from "./mountElement";
+import mountElement, { createDOMElement } from "./mountElement";
 import { updateDomAttribute } from "./elementProps";
 
 export default function diff(vNode, container, oldDom) {
@@ -18,6 +18,13 @@ export default function diff(vNode, container, oldDom) {
     } else {
       updateDomAttribute(oldDom, vNode, oldVNode);
       updateChildren(oldDom, vNode, oldVNode);
+    }
+  } else {
+    if (typeof vNode.type === "function") {
+      // 组件处理
+    } else {
+      const newDOMElement = createDOMElement(vNode);
+      container.replaceChild(newDOMElement, oldDom);
     }
   }
 }

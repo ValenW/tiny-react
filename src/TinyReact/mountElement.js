@@ -11,11 +11,11 @@ export default function mountElement(vNode, container) {
     }
     mountElement(render(vNode.props || {}), container);
   } else {
-    mountNativeElement(vNode, container);
+    container.appendChild(createDOMElement(vNode));
   }
 }
 
-function mountNativeElement(vNode, container) {
+export function createDOMElement(vNode) {
   let element = null;
   if (vNode.type === "text") {
     element = document.createTextNode(vNode.props.textContent);
@@ -24,6 +24,6 @@ function mountNativeElement(vNode, container) {
     setDomAttribute(element, vNode.props);
   }
   vNode.children.forEach((child) => mountElement(child, element));
-  container.appendChild(element);
   element._vNode = vNode;
+  return element;
 }
