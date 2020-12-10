@@ -8,12 +8,11 @@ export default function mountElement(vNode, container, oldDom) {
     if (type.prototype && typeof type.prototype.render === "function") {
       const comp = new type(vNode.props);
       renderVNode = comp.render(vNode.props || {});
-      renderVNode.component = comp.constructor;
       renderVNode.componentInstance = comp;
     } else {
       renderVNode = type(vNode.props || {});
-      renderVNode.component = type;
     }
+    renderVNode.component = type;
     mountElement(renderVNode, container, oldDom);
   } else {
     const dom = createDOMElement(vNode);

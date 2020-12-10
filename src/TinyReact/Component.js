@@ -12,6 +12,9 @@ export default class Component {
     const oldDom = this.dom;
     diff(vNode, oldDom.parentNode, oldDom);
   }
+  updateProps(props) {
+    this.props = props;
+  }
   set dom(dom) {
     this._dom = dom;
   }

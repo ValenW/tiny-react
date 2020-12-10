@@ -5,7 +5,8 @@ const root = document.getElementById("root");
 const FunctionComp = (props) => (
   <div>
     -- Function
-    <Heart />
+    <Heart /> <br />
+    {props.title}
     Hello -- Function End
   </div>
 );
@@ -54,7 +55,7 @@ const virtualDOM = (
     <h1>这个将会被删除</h1>
     2, 3<br />
     <input type="text" value="123" />
-    <FunctionComp />
+    <FunctionComp title="old" />
     <ClassComp name="name" code={"code"} />
   </div>
 );
@@ -74,8 +75,8 @@ const updatedDOM = (
     <h3>这个将会被删除</h3>
     2, 3<br />
     <input type="password" value="12345" />
+    <FunctionComp title="new" />
     <ClassComp name="name1" code={"code2"} />
-    <FunctionComp />
   </div>
 );
 
