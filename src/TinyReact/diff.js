@@ -34,7 +34,7 @@ function updateChildren(oldDom, vNode, oldVNode) {
   const keyDoms = Array.from(oldDom.childNodes).reduce((acc, cur) => {
     if (cur.nodeType === 1) {
       const key = cur.getAttribute("key");
-      if (typeof key !== "undefined") {
+      if (typeof key === "string" || typeof key === "number") {
         acc[key] = cur;
       }
     }
