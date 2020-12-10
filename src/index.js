@@ -9,6 +9,22 @@ const FunctionComp = (props) => (
   </div>
 );
 
+class ClassComp extends TinyReact.Component {
+  render() {
+    return (
+      <div>
+        <FunctionComp />
+        <div>
+          <h1>Hello</h1>
+          {this.props.name}
+          {this.props.code}
+        </div>
+        <Heart />
+      </div>
+    );
+  }
+}
+
 const Heart = () => <div>&hearts;</div>;
 
 const virtualDOM = (
@@ -26,11 +42,11 @@ const virtualDOM = (
     <h3>这个将会被删除</h3>
     2, 3<br />
     <input type="text" value="123" />
-    <FunctionComp/>
+    <FunctionComp />
+    <ClassComp name="name" code={"code"} />
   </div>
 );
 
-// TinyReact.render(virtualDOM, root);
-TinyReact.render(<FunctionComp/>, root);
+TinyReact.render(virtualDOM, root);
 
 console.log(virtualDOM);

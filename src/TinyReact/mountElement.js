@@ -2,10 +2,12 @@ export default function mountElement(vNode, container) {
   // component's type is function
   if (typeof vNode.type === "function") {
     const type = vNode.type;
+    let render = type;
     if (type.prototype && typeof type.prototype.render === "function") {
-    } else {
-      mountElement(type(vNode.props || {}), container);
+      const comp = new type(vNode.props);
+      render = comp.render.bind(comp);
     }
+    mountElement(render(vNode.props || {}), container);
   } else {
     mountNativeElement(vNode, container);
   }
