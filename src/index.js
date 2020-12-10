@@ -40,6 +40,8 @@ class ClassComp extends TinyReact.Component {
 
 const Heart = () => <div>&hearts;</div>;
 
+const refs = {};
+
 const virtualDOM = (
   <div className="container">
     <h1>你好 Tiny React</h1>
@@ -51,12 +53,18 @@ const virtualDOM = (
     {2 == 1 && <div>如果2和1相等渲染当前内容</div>}
     {2 == 2 && <div>2</div>}
     <span>这是一段内容</span>
-    <button onClick={() => alert("你好")}>点击我</button>
+    <button
+      onClick={() => {
+        alert("你好");
+        console.log(refs);
+      }}>
+      点击我
+    </button>
     <h1>这个将会被删除</h1>
     2, 3<br />
-    <input type="text" value="123" />
-    <FunctionComp title="old" />
-    <ClassComp name="name" code={"code"} />
+    <input type="text" value="123" ref={(i) => (refs.i = i)} />
+    <FunctionComp title="old" ref={(i) => (refs.f = i)} />
+    <ClassComp name="name" code={"code"} ref={(i) => (refs.c = i)} />
   </div>
 );
 
@@ -83,5 +91,5 @@ const updatedDOM = (
 TinyReact.render(virtualDOM, root);
 
 setTimeout(() => {
-  TinyReact.render(updatedDOM, root);
+  // TinyReact.render(updatedDOM, root);
 }, 2000);

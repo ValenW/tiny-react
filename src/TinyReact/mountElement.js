@@ -13,6 +13,9 @@ export default function mountElement(vNode, container, oldDom) {
       renderVNode = type(vNode.props || {});
     }
     renderVNode.component = type;
+    if (vNode.props && vNode.props.ref) {
+      vNode.props.ref(renderVNode.componentInstance || type);
+    }
     mountElement(renderVNode, container, oldDom);
   } else {
     const dom = createDOMElement(vNode);
@@ -35,6 +38,9 @@ export function createDOMElement(vNode) {
   element._vNode = vNode;
   if (vNode.componentInstance) {
     vNode.componentInstance.dom = element;
+  }
+  if (vNode.props && vNode.props.ref) {
+    vNode.props.ref(element);
   }
   return element;
 }
