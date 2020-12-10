@@ -16,7 +16,10 @@ export default function mountElement(vNode, container, oldDom) {
     mountElement(renderVNode, container, oldDom);
   } else {
     const dom = createDOMElement(vNode);
+
+    vNode.componentInstance && vNode.componentInstance.componentWillMount();
     oldDom ? container.replaceChild(dom, oldDom) : container.appendChild(dom);
+    vNode.componentInstance && vNode.componentInstance.componentDidMount();
   }
 }
 

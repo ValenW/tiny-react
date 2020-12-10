@@ -41,14 +41,28 @@ function updateChildren(oldDom, vNode, oldVNode) {
 
 function updateComponent(vNode, container, oldDom) {
   let newVNode = null;
-  if (typeof vNode.type.prototype.render === "function") {
-    const oldInstance = oldDom._vNode.componentInstance;
-    oldInstance.updateProps(vNode.props);
+  const nextProps = vNode.props;
+  if (typeof vNode.type.prototype.render !== "function") {
+    newVNode = vNode.type(nextProps || {});
+    newVNode.component = vNode.type;
+    diff(newVNode, container, oldDom);
+    return;
+  }
+
+  const oldInstance = oldDom._vNode.componentInstance;
+  const prevProps = oldInstance.props;
+  // TODO implement state
+  const preState = {};
+  const nextState = {};
+
+  oldInstance.componentWillReceiveProps(nextProps);
+  if (oldInstance.shouldComponentUpdate(nextProps, nextState)) {
+    oldInstance.componentWillUpdate(nextProps, nextState);
+    oldInstance.updateProps(nextProps);
     newVNode = oldInstance.render();
     newVNode.componentInstance = oldInstance;
-  } else {
-    newVNode = vNode.type(vNode.props || {});
+    newVNode.component = vNode.type;
+    diff(newVNode, container, oldDom);
+    oldInstance.componentDidUpdate(prevProps, preState);
   }
-  newVNode.component = vNode.type;
-  diff(newVNode, container, oldDom);
 }
