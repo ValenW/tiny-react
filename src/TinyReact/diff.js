@@ -31,4 +31,9 @@ export default function diff(vNode, container, oldDom) {
 
 function updateChildren(oldDom, vNode, oldVNode) {
   vNode.children.forEach((c, i) => diff(c, oldDom, oldDom.childNodes[i]));
+  const newLength = vNode.children.length;
+  const oldLength = oldVNode.children.length;
+  for (let i = oldLength; i >= newLength && i >= 0; i--) {
+    oldDom.childNodes[i] && oldDom.childNodes[i].remove();
+  }
 }

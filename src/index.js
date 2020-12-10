@@ -62,8 +62,6 @@ const updatedDOM = (
     <h3>这个将会被删除</h3>
     2, 3<br />
     <input type="password" value="12345" />
-    <FunctionComp />
-    <ClassComp name="name1" code={"code2"} />
   </div>
 );
 
